@@ -28,7 +28,7 @@ export default async function OgImage() {
             color: "#3e1f2c",
           }}
         >
-          <div style={{ fontSize: 20, letterSpacing: 9, textTransform: "uppercase", color: "#7b5662" }}>We’re getting married</div>
+          <div style={{ fontSize: 20, letterSpacing: 9, textTransform: "uppercase", color: "#7b5662" }}>You’re invited</div>
           <div style={{ display: "flex", alignItems: "center", fontSize: 96, marginTop: 26, fontStyle: "italic" }}>
             {partnerOne}
             <span style={{ color: "#cf6f8c", fontSize: 72, margin: "0 26px" }}>&</span>
@@ -37,7 +37,7 @@ export default async function OgImage() {
           <div style={{ fontSize: 28, marginTop: 26, letterSpacing: 5, color: "#9b3a5c" }}>
             {`${wedding.date.short}`}
           </div>
-          <div style={{ fontSize: 22, marginTop: 14, color: "#7b5662", fontStyle: "italic" }}>Kindly RSVP</div>
+          <div style={{ fontSize: 22, marginTop: 14, color: "#7b5662", fontStyle: "italic" }}>to celebrate our wedding · Kindly RSVP</div>
         </div>
       </div>
     ),

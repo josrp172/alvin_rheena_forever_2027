@@ -32,18 +32,27 @@ const siteUrl =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "http://localhost:3000");
 
-const description = `${wedding.date.display}, ${wedding.date.year} · ${wedding.date.city}. Join us as we begin forever.`;
+const weddingDay = new Date(wedding.date.ceremonyStart).toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: wedding.date.timezone,
+});
+/** What Messenger, Facebook and iMessage show when the link is shared. */
+const shareTitle = `You’re invited to our wedding · ${coupleNames}`;
+const description = `${weddingDay}. Open your invitation and kindly RSVP by ${wedding.rsvp.deadline}.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: `${coupleNames} · ${wedding.date.short}`,
   description,
   openGraph: {
-    title: `${coupleNames} are getting married`,
+    title: shareTitle,
     description,
     type: "website",
   },
-  twitter: { card: "summary_large_image", title: `${coupleNames} are getting married`, description },
+  twitter: { card: "summary_large_image", title: shareTitle, description },
   robots: wedding.allowIndexing ? undefined : { index: false, follow: false },
 };
 
