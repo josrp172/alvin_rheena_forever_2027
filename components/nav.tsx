@@ -160,9 +160,9 @@ export function Nav() {
   );
 }
 
-/** Floating RSVP pill for phones, hidden at the top and once the form is on screen. */
+/** Floating RSVP pill for phones, hidden at the top, once the form is on screen, and on a guest's first walk through. */
 export function FloatingRsvp() {
-  const { opened } = useIntro();
+  const { opened, explored } = useIntro();
   const { scrollY } = useScroll();
   const [pastHero, setPastHero] = useState(false);
   const [atForm, setAtForm] = useState(false);
@@ -177,7 +177,7 @@ export function FloatingRsvp() {
     return () => io.disconnect();
   }, []);
 
-  const show = opened && pastHero && !atForm;
+  const show = opened && explored && pastHero && !atForm;
 
   return (
     <AnimatePresence>

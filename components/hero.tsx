@@ -40,7 +40,7 @@ const fade = (delay: number, y = 16) => ({
 });
 
 export function Hero() {
-  const { opened } = useIntro();
+  const { opened, explored } = useIntro();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 160]);
@@ -131,20 +131,33 @@ export function Hero() {
         </motion.div>
 
         <motion.div variants={fade(2.9)} className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-          <a
-            href="#rsvp"
-            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-white px-7 py-3.5 text-[0.68rem] tracking-[0.28em] text-ink uppercase shadow-[0_10px_40px_-10px_rgba(207,111,140,0.8)] sm:px-9 sm:py-4"
-          >
-            <span className="relative z-10 transition-colors duration-500 group-hover:text-white">Kindly RSVP</span>
-            <span className="absolute inset-0 translate-y-full rounded-full bg-berry transition-transform duration-500 ease-[var(--ease-silk)] group-hover:translate-y-0" />
-          </a>
-          <a
-            href="#film"
-            className="inline-flex items-center gap-2.5 rounded-full border border-white/40 bg-white/10 px-6 py-3.5 text-[0.68rem] tracking-[0.28em] uppercase backdrop-blur-md transition-colors duration-500 hover:bg-white/20 sm:px-8 sm:py-4"
-          >
-            <span className="grid h-5 w-5 place-items-center rounded-full bg-white text-[0.5rem] text-berry">▶</span>
-            Our film
-          </a>
+          {explored ? (
+            <>
+              <a
+                href="#rsvp"
+                className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-white px-7 py-3.5 text-[0.68rem] tracking-[0.28em] text-ink uppercase shadow-[0_10px_40px_-10px_rgba(207,111,140,0.8)] sm:px-9 sm:py-4"
+              >
+                <span className="relative z-10 transition-colors duration-500 group-hover:text-white">Kindly RSVP</span>
+                <span className="absolute inset-0 translate-y-full rounded-full bg-berry transition-transform duration-500 ease-[var(--ease-silk)] group-hover:translate-y-0" />
+              </a>
+              <a
+                href="#film"
+                className="inline-flex items-center gap-2.5 rounded-full border border-white/40 bg-white/10 px-6 py-3.5 text-[0.68rem] tracking-[0.28em] uppercase backdrop-blur-md transition-colors duration-500 hover:bg-white/20 sm:px-8 sm:py-4"
+              >
+                <span className="grid h-5 w-5 place-items-center rounded-full bg-white text-[0.5rem] text-berry">▶</span>
+                Our film
+              </a>
+            </>
+          ) : (
+            <a
+              href="#letter"
+              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-white px-7 py-3.5 text-[0.68rem] tracking-[0.28em] text-ink uppercase shadow-[0_10px_40px_-10px_rgba(207,111,140,0.8)] sm:px-9 sm:py-4"
+            >
+              <span className="relative z-10 transition-colors duration-500 group-hover:text-white">Begin our story</span>
+              <span aria-hidden className="relative z-10 text-berry transition-colors duration-500 group-hover:text-white">↓</span>
+              <span className="absolute inset-0 translate-y-full rounded-full bg-berry transition-transform duration-500 ease-[var(--ease-silk)] group-hover:translate-y-0" />
+            </a>
+          )}
         </motion.div>
       </motion.div>
 
