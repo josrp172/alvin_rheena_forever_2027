@@ -43,8 +43,8 @@ export const wedding = {
   letter: {
     greeting: "To the people we love most,",
     paragraphs: [
-      "Every chapter of our story has your fingerprints on it — from the hallways of RTU to the streets of Taguig, from road trips to Aurora to a question asked in Hong Kong.",
-      "You watched us grow up together, and our families welcomed us as their own. So when we imagined the day we promise each other forever before God, we couldn’t picture it without you.",
+      "Whether you’ve known us since we were little or met us somewhere along the way, you are part of our story. Your prayers, your advice, your laughter, and your quiet acts of love have shaped who we are today.",
+      "You’ve cheered us on through every season and made us feel at home wherever you are. So when we imagined the day we promise each other forever before God, we couldn’t picture it without you.",
       "Come as you are. Rheena has planned every minute (yes, there’s an itinerary) — but the only thing on your schedule is to celebrate with us.",
     ],
     signOff: "With all our love,",
@@ -113,7 +113,7 @@ export const wedding = {
     ],
     numbers: [
       { value: 9, suffix: "", label: "years together" },
-      { value: 0, suffix: "", label: "breakups — not even one" },
+      { value: 2, suffix: "", label: "families becoming one" },
       { value: 1, suffix: "", label: "proposal in Hong Kong" },
       { value: 1, suffix: "", label: "very detailed wedding itinerary" },
     ],
@@ -180,9 +180,9 @@ export const wedding = {
     { src: "/photos/y6.21fef08d.jpg", caption: "Since forever, this silly" },
   ],
 
-  /** The big scroll-to-reveal line between the letter and the story: her real answer from the proposal. */
-  manifesto: "“Oo naman, yes! Tagal kong inantay ito.”",
-  manifestoBy: "Rheena · Hong Kong, September 2026",
+  /** The big scroll-to-reveal line between the letter and the story. */
+  manifesto: "“We found love in each other, and a home in all of you.”",
+  manifestoBy: "Alvin & Rheena",
 
   /** Shown on the wishes wall until real guest notes arrive. */
   sampleWishes: [

@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, type MotionValue } from "motion/react"
 import { useRef } from "react";
 import { wedding } from "@/content/wedding";
 
-const highlight = new Set(["yes!"]);
+const highlight = new Set(["home"]);
 
 function Word({ word, progress, range }: { word: string; progress: MotionValue<number>; range: [number, number] }) {
   const opacity = useTransform(progress, range, [0.12, 1]);
