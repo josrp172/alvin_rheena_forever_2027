@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, Jost, Pinyon_Script } from "next/font/google";
 import { wedding, coupleNames } from "@/content/wedding";
 import "./globals.css";
@@ -69,7 +70,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <style>{`.envelope-overlay{display:none!important}`}</style>
         </noscript>
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
