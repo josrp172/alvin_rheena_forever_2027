@@ -76,6 +76,10 @@ export function Footer() {
       >
         <span aria-hidden>↑</span> Back to the beginning
       </a>
+
+      <p className="relative mx-auto mt-12 max-w-xs border-t border-paper/10 pt-6 font-display text-sm text-paper/40 italic">
+        Made with <span className="text-gold-soft not-italic" aria-label="love">♥</span> by {footer.madeBy}
+      </p>
     </footer>
   );
 }

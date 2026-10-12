@@ -52,7 +52,7 @@ export const wedding = {
 
   story: {
     intro:
-      "A crush on the way to school, a friend request left on “seen” — and nine years of never once letting go.",
+      "A crush on the way to school, a friend request left on “seen” — and nine years of growing up, side by side.",
     milestones: [
       {
         year: "RTU",
@@ -84,15 +84,15 @@ export const wedding = {
         title: "The one who always shows up",
         icon: "car",
         photo: "/photos/birthday.fd0c7eb5.jpg",
-        body: "Nine years, and not a single breakup. Alvin has been Rheena’s constant: the daily sundo at hatid, the name on her emergency contact, the steady presence just a few streets away. Rheena has the strong personality; Alvin has the patience — and it works.",
+        body: "Nine years of choosing each other, every single day. Alvin has been Rheena’s constant: the daily sundo at hatid, the name on her emergency contact, the steady presence just a few streets away. Rheena has the strong personality; Alvin has the patience — and it works.",
       },
       {
-        year: "Aurora",
+        year: "Travels",
         date: "Our adventures",
         title: "Roads we’ve taken",
         icon: "wave",
         photo: "/photos/aurora.be23ef7a.jpg",
-        body: "Over the years they’ve explored new places together — including the waves of Aurora — sometimes with Rheena’s sister Cass along for the ride. Every trip, of course, came with one of Rheena’s famously detailed itineraries.",
+        body: "Over the years they’ve chased beaches, waterfalls and sunsets, near and far — sometimes with Rheena’s sister Cass along for the ride. Every trip, of course, came with one of Rheena’s famously detailed itineraries.",
       },
       {
         year: "2026",
@@ -363,6 +363,8 @@ export const wedding = {
   footer: {
     closing: "We can’t wait to celebrate with you.",
     contact: "Questions? Message our coordinator, Ate Joy — 0917 000 0000",
+    /** Who built the site, shown at the very bottom. */
+    madeBy: "Joseph Rodriguez",
   },
 
   /** Keep the site out of search engines (recommended for privacy). */
