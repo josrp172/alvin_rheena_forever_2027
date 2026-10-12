@@ -1,30 +1,40 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion, type TargetAndTransition, type Transition } from "motion/react";
 import { useEffect, useState } from "react";
 
 /**
- * Illustrated Alvin & Rheena in their Hong Kong proposal outfits, holding the
- * invitation between them. Drawn in a 600×620 scene; the envelope sits at
- * x 150–450, y 260–460 (see ENVELOPE_BOX). `phase`: 0 waiting · 1 opening ·
- * 2 letter out (celebrate) · 3 goodbye.
+ * Chibi Alvin & Rheena in their Hong Kong proposal outfits, holding the
+ * invitation between them. Drawn in a 600×620 scene; the envelope sits in
+ * ENVELOPE_BOX. `phase`: 0 waiting · 1 opening · 2 letter out (celebrate) · 3 goodbye.
  */
 
 export const SCENE = { w: 600, h: 620 };
-export const ENVELOPE_BOX = { x: 150, y: 260, w: 300, h: 200 };
+export const ENVELOPE_BOX = { x: 150, y: 330, w: 300, h: 200 };
 
-const SKIN_A = "#e0ad86";
-const SKIN_A_SHADE = "#c98f6a";
-const SKIN_R = "#e9bb98";
-const SKIN_R_SHADE = "#d49d7b";
-const HAIR = "#1d1719";
-const HAIR_HI = "#3a2c30";
-const WHITE = "#fbfaf7";
-const WHITE_SHADE = "#e7e2da";
+const C = {
+  skinA: "#f0c09d",
+  skinALine: "#cc9070",
+  skinR: "#f6cdb0",
+  skinRLine: "#d69a7e",
+  hair: "#251b21",
+  hairLine: "#120b0f",
+  hairHi: "#5e4955",
+  white: "#fffdf9",
+  whiteLine: "#dcd2c6",
+  pants: "#2a2530",
+  pantsLine: "#141218",
+  skirt: "#f2f5fc",
+  skirtLine: "#d6dcea",
+  eye: "#2d1f24",
+  blush: "#f4919d",
+};
+
+const line = { strokeWidth: 2.2, strokeLinejoin: "round" as const, strokeLinecap: "round" as const };
 
 type Look = { x: number; y: number };
 
-/** Pupils (and heads, a little) follow the guest's pointer. */
+/** Pupils follow the guest's pointer. */
 function usePointerLook(enabled: boolean): Look {
   const [look, setLook] = useState<Look>({ x: 0, y: 0 });
   useEffect(() => {
@@ -40,163 +50,235 @@ function usePointerLook(enabled: boolean): Look {
   return look;
 }
 
-/** Joint position as a fraction of the part's own bounding box (how Motion pivots SVG). */
-const pivot = (originX: number, originY: number) => ({ originX, originY });
-
-function Eye({ cx, cy, gaze, delay, lash }: { cx: number; cy: number; gaze: Look; delay: number; lash?: boolean }) {
+/**
+ * A rotatable part. Motion pivots SVG around the centre of the element's box,
+ * so an invisible circle centred on the joint makes that centre the joint.
+ */
+function Joint({
+  x,
+  y,
+  r,
+  animate,
+  transition,
+  children,
+}: {
+  x: number;
+  y: number;
+  r: number;
+  animate?: TargetAndTransition;
+  transition?: Transition;
+  children: React.ReactNode;
+}) {
   return (
-    <motion.g
-      style={pivot(0.5, 0.6)}
-      animate={{ scaleY: [1, 1, 0.08, 1, 1] }}
-      transition={{ duration: 4.2, times: [0, 0.9, 0.93, 0.96, 1], repeat: Infinity, delay }}
-    >
-      <motion.g animate={{ x: gaze.x * 2.2, y: gaze.y * 1.6 }} transition={{ type: "spring", stiffness: 120, damping: 14 }}>
-        <ellipse cx={cx} cy={cy} rx={3.3} ry={4.1} fill="#241b1e" />
-        <circle cx={cx + 1.1} cy={cy - 1.4} r={1.1} fill="#fff" opacity={0.9} />
-      </motion.g>
-      {lash && <path d={`M${cx - 5} ${cy - 3.5} q5 -4.5 10 -1`} stroke="#241b1e" strokeWidth={1.6} fill="none" strokeLinecap="round" />}
+    <motion.g style={{ originX: 0.5, originY: 0.5 }} animate={animate} transition={transition}>
+      <circle cx={x} cy={y} r={r} fill="transparent" pointerEvents="none" />
+      {children}
     </motion.g>
+  );
+}
+
+function Eye({ cx, cy, gaze, happy, lash, delay }: { cx: number; cy: number; gaze: Look; happy: boolean; lash?: boolean; delay: number }) {
+  if (happy) {
+    return <path d={`M${cx - 12} ${cy + 3} Q${cx} ${cy - 13} ${cx + 12} ${cy + 3}`} stroke={C.eye} strokeWidth={4.5} fill="none" strokeLinecap="round" />;
+  }
+  return (
+    <Joint x={cx} y={cy} r={18} animate={{ scaleY: [1, 1, 0.08, 1, 1] }} transition={{ duration: 4.4, times: [0, 0.9, 0.93, 0.96, 1], repeat: Infinity, delay }}>
+      <ellipse cx={cx} cy={cy} rx={11.5} ry={14.5} fill={C.eye} />
+      <motion.g animate={{ x: gaze.x * 3.2, y: gaze.y * 2.6 }} transition={{ type: "spring", stiffness: 120, damping: 14 }}>
+        <ellipse cx={cx} cy={cy + 2} rx={8} ry={10} fill="#5a3640" opacity={0.85} />
+        <circle cx={cx + 4} cy={cy - 5} r={4.4} fill="#fff" />
+        <circle cx={cx - 4} cy={cy + 6} r={2} fill="#fff" opacity={0.85} />
+      </motion.g>
+      {lash && (
+        <path d={`M${cx + 8} ${cy - 11} l6 -6 M${cx + 11} ${cy - 5} l7 -2 M${cx - 9} ${cy - 13} q9 -6 18 0`} stroke={C.eye} strokeWidth={2.6} fill="none" strokeLinecap="round" />
+      )}
+    </Joint>
   );
 }
 
 function Alvin({ phase, gaze }: { phase: number; gaze: Look }) {
-  const headTilt = phase === 1 ? 7 : phase === 2 ? -4 : phase === 3 ? 9 : gaze.x * 3;
-  const armUp = phase === 2;
-  const eyes = phase === 1 ? { x: 0.8, y: 1 } : phase === 2 ? { x: 0.6, y: -1 } : phase === 3 ? { x: 1, y: 0 } : gaze;
+  const lean = phase === 1 ? 3 : phase === 2 ? -2 : phase === 3 ? 4 : 0;
+  const tilt = phase === 1 ? 6 : phase === 2 ? -8 : phase === 3 ? 7 : gaze.x * 4;
+  const eyes = phase === 1 ? { x: 0.8, y: 0.9 } : phase === 3 ? { x: 1, y: 0.1 } : gaze;
+  const happy = phase === 2;
   return (
-    <motion.g animate={{ y: [0, -1.6, 0] }} transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}>
-      {/* legs: black trousers, white sneakers */}
-      <path d="M106 398 L102 586 L127 586 L135 452 L141 586 L166 586 L164 398 Z" fill="#26222a" />
-      <path d="M135 452 L135 560" stroke="#3a343f" strokeWidth={1.2} />
-      <ellipse cx={114} cy={589} rx={17} ry={6.5} fill={WHITE} stroke="#d9d4cc" />
-      <ellipse cx={154} cy={589} rx={17} ry={6.5} fill={WHITE} stroke="#d9d4cc" />
+    <Joint x={110} y={596} r={600} animate={{ rotate: lean }} transition={{ type: "spring", stiffness: 70, damping: 11 }}>
+      <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}>
+        {/* legs & sneakers */}
+        <path d="M80 462 L80 566 Q80 576 92 576 L100 576 Q108 576 108 566 L108 470 Z" fill={C.pants} stroke={C.pantsLine} {...line} />
+        <path d="M112 470 L112 566 Q112 576 120 576 L128 576 Q140 576 140 566 L140 462 Z" fill={C.pants} stroke={C.pantsLine} {...line} />
+        <path d="M68 584 Q68 566 92 566 Q112 566 113 580 Q113 593 92 593 Q68 593 68 584 Z" fill={C.white} stroke={C.whiteLine} {...line} />
+        <path d="M107 580 Q108 566 128 566 Q152 566 152 584 Q152 593 128 593 Q107 593 107 580 Z" fill={C.white} stroke={C.whiteLine} {...line} />
+        <path d="M70 586 L111 586 M109 586 L150 586" stroke="#e6ddd2" strokeWidth={2} />
 
-      {/* inner arm reaching to the envelope's left edge (mostly hidden behind it) */}
-      <path d="M176 226 Q196 268 170 334 L156 344 L148 332 Q170 276 166 232 Z" fill={SKIN_A} />
+        {/* inner arm & sleeve, mostly hidden behind the envelope */}
+        <path d="M156 318 Q182 326 186 360 L172 364 Q166 400 158 424 L144 420 Q150 394 152 362 Z" fill={C.skinA} stroke={C.skinALine} {...line} />
+        <path d="M156 312 Q182 318 188 354 L156 364 Q150 336 148 318 Z" fill={C.white} stroke={C.whiteLine} {...line} />
 
-      {/* neck, tucked under the collar */}
-      <path d="M125 138 L145 138 L148 180 L122 180 Z" fill={SKIN_A_SHADE} />
+        {/* white polo */}
+        <path d="M58 336 Q60 300 110 296 Q160 300 162 336 L168 462 Q110 480 52 462 Z" fill={C.white} stroke={C.whiteLine} {...line} />
+        <path d="M58 336 Q60 300 110 296 Q160 300 162 336 L168 462 Q110 480 52 462 Z" fill="url(#fabric)" />
+        <path d="M110 314 L110 356" stroke={C.whiteLine} strokeWidth={2} />
+        <circle cx={110} cy={330} r={2.6} fill="#cfc4b7" />
+        <circle cx={110} cy={345} r={2.6} fill="#cfc4b7" />
+        <path d="M86 298 Q100 300 110 314 L97 328 Q84 317 82 302 Z" fill={C.white} stroke={C.whiteLine} {...line} />
+        <path d="M134 298 Q120 300 110 314 L123 328 Q136 317 138 302 Z" fill={C.white} stroke={C.whiteLine} {...line} />
+        <path d="M58 452 Q110 470 162 452" stroke={C.whiteLine} strokeWidth={2} fill="none" />
 
-      {/* white polo */}
-      <path d="M92 180 Q135 163 178 180 L184 302 Q186 362 176 406 L94 406 Q84 362 86 302 Z" fill={WHITE} />
-      <path d="M92 180 Q135 163 178 180 L184 302 Q186 362 176 406 L94 406 Q84 362 86 302 Z" fill="url(#fabric)" />
-      <path d="M178 180 Q198 190 202 232 L176 238 Z" fill={WHITE} stroke={WHITE_SHADE} />
-      <path d="M135 168 L135 222" stroke={WHITE_SHADE} strokeWidth={2} />
-      <circle cx={135} cy={192} r={1.8} fill="#cfc8bd" />
-      <circle cx={135} cy={208} r={1.8} fill="#cfc8bd" />
-      <path d="M118 166 L135 186 L126 194 L112 176 Z M152 166 L135 186 L144 194 L158 176 Z" fill={WHITE} stroke={WHITE_SHADE} strokeWidth={1.2} />
+        {/* head */}
+        <Joint x={110} y={292} r={250} animate={{ rotate: tilt }} transition={{ type: "spring", stiffness: 80, damping: 12 }}>
+          <Joint x={110} y={292} r={250} animate={{ rotate: [-1.5, 1.5, -1.5] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
+            <ellipse cx={24} cy={208} rx={14} ry={18} fill={C.skinA} stroke={C.skinALine} {...line} />
+            <ellipse cx={196} cy={208} rx={14} ry={18} fill={C.skinA} stroke={C.skinALine} {...line} />
+            <path d="M26 196 Q26 112 110 110 Q194 112 194 196 Q194 262 152 282 Q110 296 68 282 Q26 262 26 196 Z" fill={C.skinA} stroke={C.skinALine} {...line} />
+            {/* short sides, swept-up top with spiky front locks */}
+            <path
+              d="M20 204 Q8 104 110 86 Q212 104 200 204 Q196 172 180 152 Q154 162 128 152 Q98 168 68 158 Q44 172 20 204 Z"
+              fill={C.hair}
+              stroke={C.hairLine}
+              {...line}
+            />
+            <motion.g
+              style={{ originX: 0.5, originY: 1 }}
+              animate={{ rotate: [-1.2, 1.2, -1.2] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <path
+                d="M30 140 Q36 76 104 62 Q164 52 194 86 Q208 104 204 136 Q190 110 164 102 Q172 88 154 82 Q128 96 96 98 Q60 104 30 140 Z"
+                fill={C.hair}
+                stroke={C.hairLine}
+                {...line}
+              />
+              <path d="M92 100 Q100 52 150 42 Q126 62 126 92 Z" fill={C.hair} stroke={C.hairLine} {...line} />
+              <path d="M124 94 Q146 46 192 52 Q164 64 160 100 Z" fill={C.hair} stroke={C.hairLine} {...line} />
+              <path d="M58 104 Q66 78 98 66" stroke={C.hairHi} strokeWidth={5} fill="none" strokeLinecap="round" />
+              <path d="M134 64 Q150 54 170 56 M172 96 Q188 106 194 124" stroke={C.hairHi} strokeWidth={4.5} fill="none" strokeLinecap="round" />
+            </motion.g>
+            <path d="M56 176 Q76 166 96 174 M124 174 Q144 166 164 176" stroke={C.hair} strokeWidth={6.5} fill="none" strokeLinecap="round" />
+            <Eye cx={76} cy={208} gaze={eyes} happy={happy} delay={0.3} />
+            <Eye cx={144} cy={208} gaze={eyes} happy={happy} delay={0.3} />
+            <path d="M108 224 Q113 232 106 236" stroke={C.skinALine} strokeWidth={2.6} fill="none" strokeLinecap="round" />
+            <ellipse cx={58} cy={242} rx={16} ry={9} fill={C.blush} opacity={0.45} />
+            <ellipse cx={162} cy={242} rx={16} ry={9} fill={C.blush} opacity={0.45} />
+            {phase >= 2 ? (
+              <g>
+                <path d="M88 244 Q110 276 132 244 Q110 254 88 244 Z" fill="#8a3f45" stroke="#7a3238" {...line} />
+                <path d="M99 258 Q110 268 121 258 Q110 254 99 258 Z" fill="#ec8592" />
+              </g>
+            ) : (
+              <path d="M92 248 Q110 264 128 248" stroke="#8a3f45" strokeWidth={4.5} fill="none" strokeLinecap="round" />
+            )}
+          </Joint>
+        </Joint>
 
-      {/* outer arm: hangs, then cheers when the letter comes out */}
-      <motion.g style={pivot(0.85, 0.03)} animate={{ rotate: armUp ? 156 : 4 }} transition={{ type: "spring", stiffness: 110, damping: 12 }}>
-        <path d="M92 180 Q72 190 68 232 L94 238 Z" fill={WHITE} stroke={WHITE_SHADE} />
-        <path d="M72 230 Q68 282 73 326 L89 326 Q93 282 93 236 Z" fill={SKIN_A} />
-        <rect x={71} y={306} width={19} height={8} rx={2} fill="#2b2b2f" />
-        <ellipse cx={81} cy={334} rx={10} ry={11} fill={SKIN_A} />
+        {/* outer arm: hangs, then cheers when the letter comes out */}
+        <Joint
+          x={64}
+          y={322}
+          r={130}
+          animate={{ rotate: phase === 2 ? [100, 128, 108, 128, 112] : 6 }}
+          transition={phase === 2 ? { duration: 1.6, ease: "easeInOut" } : { type: "spring", stiffness: 110, damping: 11 }}
+        >
+          <path d="M38 350 Q30 390 40 418 L62 418 Q66 388 66 358 Z" fill={C.skinA} stroke={C.skinALine} {...line} />
+          <rect x={36} y={396} width={29} height={10} rx={3.5} fill="#2e2b33" />
+          <circle cx={51} cy={424} r={15} fill={C.skinA} stroke={C.skinALine} {...line} />
+          <path d="M64 312 Q40 318 34 352 L68 362 Q72 334 74 318 Z" fill={C.white} stroke={C.whiteLine} {...line} />
+        </Joint>
       </motion.g>
-
-      {/* head */}
-      <motion.g style={pivot(0.5, 0.95)} animate={{ rotate: headTilt }} transition={{ type: "spring", stiffness: 80, damping: 12 }}>
-        <ellipse cx={100} cy={110} rx={6} ry={9} fill={SKIN_A} />
-        <ellipse cx={170} cy={110} rx={6} ry={9} fill={SKIN_A} />
-        <path d="M101 100 Q101 60 135 58 Q169 60 169 100 Q170 138 135 156 Q100 138 101 100 Z" fill={SKIN_A} />
-        {/* swept-up black hair */}
-        <path d="M98 106 Q92 60 120 44 Q148 30 172 50 Q184 70 172 100 Q168 80 158 72 Q138 82 112 76 Q104 88 102 106 Z" fill={HAIR} />
-        <path d="M112 50 Q138 22 172 38 Q156 38 146 50 Q128 42 112 50 Z" fill={HAIR} />
-        <path d="M122 46 Q140 34 160 40" stroke={HAIR_HI} strokeWidth={3} fill="none" strokeLinecap="round" />
-        <path d="M113 95 q8 -4 16 -1 M141 94 q8 -3 16 1" stroke={HAIR} strokeWidth={3.2} fill="none" strokeLinecap="round" />
-        <Eye cx={122} cy={108} gaze={eyes} delay={0.3} />
-        <Eye cx={148} cy={108} gaze={eyes} delay={0.3} />
-        <path d="M135 110 q-4 9 1 13" stroke={SKIN_A_SHADE} strokeWidth={2} fill="none" strokeLinecap="round" />
-        <ellipse cx={116} cy={124} rx={7} ry={4} fill="#e98e8e" opacity={0.35} />
-        <ellipse cx={154} cy={124} rx={7} ry={4} fill="#e98e8e" opacity={0.35} />
-        {phase >= 2 ? (
-          <path d="M123 129 Q135 145 147 129 Q135 134 123 129 Z" fill="#8c3b3f" stroke="#7a2f34" strokeWidth={1} />
-        ) : (
-          <path d="M124 131 Q135 140 146 131" stroke="#8c3b3f" strokeWidth={2.4} fill="none" strokeLinecap="round" />
-        )}
-      </motion.g>
-    </motion.g>
+    </Joint>
   );
 }
 
 function Rheena({ phase, gaze }: { phase: number; gaze: Look }) {
-  const headTilt = phase === 1 ? -7 : phase === 2 ? 4 : phase === 3 ? -9 : gaze.x * 3;
-  const cheek = phase === 2 || phase === 3;
-  const eyes = phase === 1 ? { x: -0.8, y: 1 } : phase === 2 ? { x: -0.6, y: -1 } : phase === 3 ? { x: -1, y: 0 } : gaze;
+  const lean = phase === 1 ? -3 : phase === 2 ? 2 : phase === 3 ? -4 : 0;
+  const tilt = phase === 1 ? -6 : phase === 2 ? 8 : phase === 3 ? -7 : gaze.x * 4;
+  const eyes = phase === 1 ? { x: -0.8, y: 0.9 } : phase === 3 ? { x: -1, y: 0.1 } : gaze;
+  const happy = phase === 2;
+  const cheek = phase >= 2;
   return (
-    <motion.g animate={{ y: [0, -1.4, 0] }} transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}>
-      {/* long hair behind */}
-      <motion.path
-        d="M430 112 Q428 76 465 72 Q502 76 500 114 L512 292 Q492 304 480 282 L470 182 L460 182 L450 282 Q438 304 418 292 Z"
-        fill={HAIR}
-        style={pivot(0.5, 0.1)}
-        animate={{ skewX: [-1.2, 1.2, -1.2] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      />
+    <Joint x={490} y={600} r={600} animate={{ rotate: lean }} transition={{ type: "spring", stiffness: 70, damping: 11 }}>
+      <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}>
+        {/* long hair behind */}
+        <Joint x={490} y={110} r={360} animate={{ rotate: [-1.2, 1.2, -1.2] }} transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}>
+          <path
+            d="M396 200 Q386 104 490 96 Q594 104 584 200 Q596 320 588 448 Q566 476 540 452 L536 320 L444 320 L440 452 Q414 476 392 448 Q384 320 396 200 Z"
+            fill={C.hair}
+            stroke={C.hairLine}
+            {...line}
+          />
+        </Joint>
 
-      {/* long flowy skirt */}
-      <path d="M440 330 Q465 322 490 330 Q522 452 542 590 Q465 606 388 590 Q408 452 440 330 Z" fill="#f2f4fa" />
-      <path d="M440 330 Q465 322 490 330 Q522 452 542 590 Q465 606 388 590 Q408 452 440 330 Z" fill="url(#fabric)" />
-      <path d="M452 338 Q438 470 420 594 M466 336 Q466 470 466 600 M480 338 Q496 470 514 594" stroke="#dfe4ee" strokeWidth={1.6} fill="none" />
-      <ellipse cx={450} cy={600} rx={13} ry={5} fill={WHITE} stroke="#d9d4cc" />
-      <ellipse cx={482} cy={600} rx={13} ry={5} fill={WHITE} stroke="#d9d4cc" />
+        {/* long flowy skirt */}
+        <Joint x={490} y={398} r={215} animate={{ skewX: [-1.5, 1.5, -1.5] }} transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}>
+          <path d="M440 396 Q490 386 540 396 Q584 476 598 584 Q490 606 382 584 Q396 476 440 396 Z" fill={C.skirt} stroke={C.skirtLine} {...line} />
+          <path d="M440 396 Q490 386 540 396 Q584 476 598 584 Q490 606 382 584 Q396 476 440 396 Z" fill="url(#fabric)" />
+          <path d="M462 404 Q448 500 430 594 M490 400 L490 600 M518 404 Q532 500 550 594" stroke={C.skirtLine} strokeWidth={2.2} fill="none" />
+        </Joint>
+        <ellipse cx={468} cy={598} rx={17} ry={7} fill={C.white} stroke={C.whiteLine} {...line} />
+        <ellipse cx={512} cy={598} rx={17} ry={7} fill={C.white} stroke={C.whiteLine} {...line} />
 
-      {/* inner arm to the envelope's right edge */}
-      <path d="M434 236 Q422 276 440 334 L452 344 L458 330 Q440 276 446 238 Z" fill={SKIN_R} />
+        {/* inner arm to the envelope's right edge */}
+        <path d="M430 330 Q414 362 426 400 L440 424 L456 418 Q444 392 446 340 Z" fill={C.skinR} stroke={C.skinRLine} {...line} />
 
-      {/* neck */}
-      <path d="M457 158 L473 158 L476 212 L454 212 Z" fill={SKIN_R_SHADE} />
+        {/* neck, shoulders, off-shoulder ruffle top */}
+        <path d="M476 270 L504 270 L506 302 L474 302 Z" fill="#e5b08f" />
+        <path d="M418 326 Q430 296 490 292 Q550 296 562 326 Z" fill={C.skinR} stroke={C.skinRLine} {...line} />
+        <path d="M440 334 L540 334 L546 402 Q490 412 434 402 Z" fill={C.white} stroke={C.whiteLine} {...line} />
+        <path d="M440 334 L540 334 L546 402 Q490 412 434 402 Z" fill="url(#fabric)" />
+        <path
+          d="M410 318 q10 14 20 0 q10 14 20 0 q10 14 20 0 q10 14 20 0 q10 14 20 0 q10 14 20 0 q10 14 20 0 q10 14 20 0 L570 340 q-10 16 -20 2 q-10 16 -20 2 q-10 16 -20 2 q-10 16 -20 2 q-10 16 -20 2 q-10 16 -20 2 q-10 16 -20 2 q-10 16 -20 2 Z"
+          fill={C.white}
+          stroke={C.whiteLine}
+          {...line}
+        />
+        <path d="M434 398 q9 10 18 0 q9 10 18 0 q9 10 18 0 q9 10 18 0 q9 10 18 0 q9 10 18 0" stroke={C.whiteLine} strokeWidth={2} fill="none" />
 
-      {/* off-shoulder ruffle top */}
-      <path d="M428 230 Q440 206 465 205 Q490 206 502 230 Z" fill={SKIN_R} />
-      <path d="M442 232 L488 232 L492 334 Q465 340 438 334 Z" fill={WHITE} />
-      <path d="M442 232 L488 232 L492 334 Q465 340 438 334 Z" fill="url(#fabric)" />
-      <path d="M438 330 q7 9 14 0 q7 9 14 0 q7 9 14 0 q7 9 14 0 L492 336 Q465 344 438 336 Z" fill={WHITE} stroke={WHITE_SHADE} />
-      <path d="M424 228 q8 11 16 0 q8 11 16 0 q8 11 16 0 q8 11 16 0 q8 11 16 0 L506 242 q-8 12 -16 2 q-8 12 -16 2 q-8 12 -16 2 q-8 12 -16 2 q-8 12 -16 2 Z" fill={WHITE} stroke={WHITE_SHADE} />
-      <path d="M452 206 L448 228 M478 206 L482 228" stroke={WHITE_SHADE} strokeWidth={1.2} />
+        {/* head */}
+        <Joint x={490} y={292} r={250} animate={{ rotate: tilt }} transition={{ type: "spring", stiffness: 80, damping: 12 }}>
+          <Joint x={490} y={292} r={250} animate={{ rotate: [1.5, -1.5, 1.5] }} transition={{ duration: 5.4, repeat: Infinity, ease: "easeInOut" }}>
+            <path d="M406 196 Q406 114 490 112 Q574 114 574 196 Q574 260 532 280 Q490 294 448 280 Q406 260 406 196 Z" fill={C.skinR} stroke={C.skinRLine} {...line} />
+            {/* side-swept bangs and the strands that frame her face */}
+            <path d="M398 212 Q390 100 492 94 Q594 102 584 210 Q576 168 548 152 Q530 176 488 180 Q448 182 424 178 Q406 186 398 212 Z" fill={C.hair} stroke={C.hairLine} {...line} />
+            <path d="M548 152 Q542 120 516 104" stroke={C.hairLine} strokeWidth={2.2} fill="none" strokeLinecap="round" />
+            <path d="M402 196 Q386 270 408 352 L430 346 Q414 270 420 206 Z" fill={C.hair} stroke={C.hairLine} {...line} />
+            <path d="M580 192 Q596 270 572 352 L550 346 Q566 270 562 202 Z" fill={C.hair} stroke={C.hairLine} {...line} />
+            <path d="M448 112 Q490 98 534 112 M430 168 Q462 160 500 162" stroke={C.hairHi} strokeWidth={5} fill="none" strokeLinecap="round" />
+            <path d="M443 190 Q457 183 471 189 M509 189 Q523 183 537 190" stroke={C.hair} strokeWidth={3.6} fill="none" strokeLinecap="round" />
+            <Eye cx={458} cy={212} gaze={eyes} happy={happy} lash delay={1.2} />
+            <Eye cx={522} cy={212} gaze={eyes} happy={happy} lash delay={1.2} />
+            <path d="M489 228 Q493 234 487 237" stroke={C.skinRLine} strokeWidth={2.4} fill="none" strokeLinecap="round" />
+            <ellipse cx={440} cy={244} rx={16} ry={9} fill={C.blush} opacity={cheek ? 0.75 : 0.5} />
+            <ellipse cx={540} cy={244} rx={16} ry={9} fill={C.blush} opacity={cheek ? 0.75 : 0.5} />
+            {phase >= 2 ? (
+              <path d="M474 250 Q490 272 506 250 Q490 258 474 250 Z" fill="#c25a6c" stroke="#a84a5b" {...line} />
+            ) : (
+              <path d="M477 252 Q490 263 503 252" stroke="#c25a6c" strokeWidth={4.2} fill="none" strokeLinecap="round" />
+            )}
+          </Joint>
+        </Joint>
 
-      {/* head */}
-      <motion.g style={pivot(0.5, 0.6)} animate={{ rotate: headTilt }} transition={{ type: "spring", stiffness: 80, damping: 12 }}>
-        <path d="M435 122 Q435 88 465 86 Q495 88 495 122 Q496 158 465 170 Q434 158 435 122 Z" fill={SKIN_R} />
-        {/* side-parted front hair framing her face */}
-        <path d="M433 126 Q430 82 466 78 Q502 80 498 124 Q494 96 474 90 Q454 102 442 130 Z" fill={HAIR} />
-        <path d="M434 120 Q426 172 432 236 L443 232 Q440 172 444 132 Z" fill={HAIR} />
-        <path d="M497 116 Q505 172 499 238 L488 234 Q491 172 487 126 Z" fill={HAIR} />
-        <path d="M452 84 Q472 80 488 92" stroke={HAIR_HI} strokeWidth={2.5} fill="none" strokeLinecap="round" />
-        <path d="M445 119 q7 -3 13 0 M472 119 q7 -3 13 0" stroke={HAIR} strokeWidth={2} fill="none" strokeLinecap="round" />
-        <Eye cx={452} cy={130} gaze={eyes} delay={1.1} lash />
-        <Eye cx={478} cy={130} gaze={eyes} delay={1.1} lash />
-        <path d="M465 132 q-3 8 1 11" stroke={SKIN_R_SHADE} strokeWidth={1.8} fill="none" strokeLinecap="round" />
-        <ellipse cx={446} cy={145} rx={7} ry={4} fill="#ef8d9a" opacity={cheek ? 0.65 : 0.4} />
-        <ellipse cx={484} cy={145} rx={7} ry={4} fill="#ef8d9a" opacity={cheek ? 0.65 : 0.4} />
-        {phase >= 2 ? (
-          <path d="M455 151 Q465 165 475 151 Q465 156 455 151 Z" fill="#b8505f" stroke="#a3404f" strokeWidth={1} />
-        ) : (
-          <path d="M456 153 Q465 160 474 153" stroke="#b8505f" strokeWidth={2.4} fill="none" strokeLinecap="round" />
-        )}
+        {/* outer arm with the ring: hangs, then hand to cheek — kilig */}
+        <Joint x={550} y={326} r={130} animate={{ rotate: cheek ? -168 : -5 }} transition={{ type: "spring", stiffness: 90, damping: 12 }}>
+          <path d="M546 330 Q572 360 568 412 L548 414 Q550 372 534 340 Z" fill={C.skinR} stroke={C.skinRLine} {...line} />
+          <rect x={546} y={392} width={22} height={9} rx={3.5} fill="#d4a26a" />
+          <circle cx={558} cy={422} r={14} fill={C.skinR} stroke={C.skinRLine} {...line} />
+          <circle cx={551} cy={428} r={3.6} fill="none" stroke="#efe6cf" strokeWidth={2.2} />
+          <AnimatePresence>
+            {cheek && (
+              <motion.path
+                d="M551 418 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 Z"
+                fill="#fff"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: [0, 1.8, 1], opacity: [0, 1, 0.95] }}
+                exit={{ opacity: 0 }}
+                style={{ originX: 0.5, originY: 0.5 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              />
+            )}
+          </AnimatePresence>
+        </Joint>
       </motion.g>
-
-      {/* outer arm with the ring: hangs, then hand to cheek — kilig */}
-      <motion.g style={pivot(0.2, 0.02)} animate={{ rotate: cheek ? 172 : -4 }} transition={{ type: "spring", stiffness: 90, damping: 13 }}>
-        <path d="M494 236 Q512 282 507 326 L521 326 Q524 282 508 234 Z" fill={SKIN_R} />
-        <rect x={505} y={306} width={15} height={7} rx={2} fill="#d4a26a" />
-        <ellipse cx={514} cy={334} rx={9} ry={10} fill={SKIN_R} />
-        <circle cx={509} cy={340} r={2.6} fill="none" stroke="#e8e2d0" strokeWidth={1.4} />
-        <AnimatePresence>
-          {cheek && (
-            <motion.path
-              d="M509 331 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2 Z"
-              fill="#fff"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: [0, 1.6, 1], opacity: [0, 1, 0.9], rotate: 45 }}
-              exit={{ opacity: 0 }}
-              style={pivot(0.5, 0.5)}
-              transition={{ duration: 0.8, delay: 0.5 }}
-            />
-          )}
-        </AnimatePresence>
-      </motion.g>
-    </motion.g>
+    </Joint>
   );
 }
 
@@ -208,46 +290,68 @@ export function CoupleBack({ phase }: { phase: number }) {
     <svg viewBox={`0 0 ${SCENE.w} ${SCENE.h}`} className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
       <defs>
         <linearGradient id="fabric" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#000" stopOpacity="0.05" />
-          <stop offset="0.35" stopColor="#fff" stopOpacity="0.25" />
+          <stop offset="0" stopColor="#000" stopOpacity="0.06" />
+          <stop offset="0.35" stopColor="#fff" stopOpacity="0.3" />
           <stop offset="0.7" stopColor="#000" stopOpacity="0" />
-          <stop offset="1" stopColor="#000" stopOpacity="0.09" />
+          <stop offset="1" stopColor="#000" stopOpacity="0.1" />
         </linearGradient>
       </defs>
-      <ellipse cx={135} cy={596} rx={70} ry={9} fill="#3e1f2c" opacity={0.1} />
-      <ellipse cx={465} cy={604} rx={84} ry={9} fill="#3e1f2c" opacity={0.1} />
+      <ellipse cx={110} cy={596} rx={72} ry={10} fill="#3e1f2c" opacity={0.1} />
+      <ellipse cx={490} cy={602} rx={100} ry={10} fill="#3e1f2c" opacity={0.1} />
       <Alvin phase={phase} gaze={gaze} />
       <Rheena phase={phase} gaze={gaze} />
     </svg>
   );
 }
 
-/** Their hands, drawn on top of the envelope's edges, plus the hearts. */
+const sparkles = [
+  [120, 60],
+  [300, 96],
+  [470, 54],
+  [560, 150],
+  [40, 150],
+  [330, 40],
+];
+
+/** Their hands on the envelope's edges, plus hearts and sparkles. */
 export function CoupleFront({ phase }: { phase: number }) {
   return (
     <svg viewBox={`0 0 ${SCENE.w} ${SCENE.h}`} className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden>
-      {/* Alvin's hand on the left edge */}
-      <motion.g animate={{ y: [0, -1.6, 0] }} transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}>
-        <rect x={142} y={332} width={20} height={26} rx={9} fill={SKIN_A} />
-        <path d="M160 338 q7 1 7 7 q0 5 -7 5" fill={SKIN_A} stroke={SKIN_A_SHADE} strokeWidth={1} />
+      <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}>
+        <path d="M134 406 Q134 396 146 396 L156 396 Q168 396 168 410 L168 432 Q168 444 154 444 L146 444 Q134 444 134 432 Z" fill={C.skinA} stroke={C.skinALine} {...line} />
+        <path d="M152 408 L166 408 M152 420 L166 420 M152 432 L164 432" stroke={C.skinALine} strokeWidth={1.8} strokeLinecap="round" />
       </motion.g>
-      {/* Rheena's hand on the right edge */}
-      <motion.g animate={{ y: [0, -1.4, 0] }} transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}>
-        <rect x={439} y={332} width={18} height={24} rx={8} fill={SKIN_R} />
-        <path d="M441 338 q-7 1 -7 7 q0 5 7 5" fill={SKIN_R} stroke={SKIN_R_SHADE} strokeWidth={1} />
+      <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}>
+        <path d="M466 406 Q466 396 454 396 L444 396 Q432 396 432 410 L432 432 Q432 444 446 444 L454 444 Q466 444 466 432 Z" fill={C.skinR} stroke={C.skinRLine} {...line} />
+        <path d="M448 408 L434 408 M448 420 L434 420 M448 432 L436 432" stroke={C.skinRLine} strokeWidth={1.8} strokeLinecap="round" />
       </motion.g>
 
       <AnimatePresence>
         {phase >= 2 &&
-          [0, 1, 2, 3, 4, 5, 6].map((i) => (
+          [0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
             <motion.path
-              key={i}
-              d="M0 4 C0 -1 7 -2 7 3 C7 -2 14 -1 14 4 C14 9 7 13 7 13 C7 13 0 9 0 4 Z"
+              key={`h${i}`}
+              d="M0 5 C0 -1 9 -3 9 4 C9 -3 18 -1 18 5 C18 12 9 17 9 17 C9 17 0 12 0 5 Z"
               fill={i % 2 ? "#cf6f8c" : "#f6b6c4"}
-              initial={{ x: 293, y: 210, opacity: 0, scale: 0.4 }}
-              animate={{ x: 293 + (i - 3) * 26, y: 60 - (i % 3) * 22, opacity: [0, 1, 0], scale: 1 + (i % 3) * 0.2 }}
+              stroke="#fff"
+              strokeWidth={1.2}
+              initial={{ x: 291, y: 300, opacity: 0, scale: 0.4 }}
+              animate={{ x: 291 + (i - 3.5) * 30, y: 110 - (i % 3) * 26, opacity: [0, 1, 0], scale: 1.1 + (i % 3) * 0.25 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 2.2, delay: 0.15 * i, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 2.4, delay: 0.12 * i, ease: [0.16, 1, 0.3, 1] }}
+            />
+          ))}
+        {phase >= 2 &&
+          sparkles.map(([x, y], i) => (
+            <motion.path
+              key={`s${i}`}
+              d={`M${x} ${y - 9} Q${x + 1.5} ${y - 1.5} ${x + 9} ${y} Q${x + 1.5} ${y + 1.5} ${x} ${y + 9} Q${x - 1.5} ${y + 1.5} ${x - 9} ${y} Q${x - 1.5} ${y - 1.5} ${x} ${y - 9} Z`}
+              fill="#ecd0a7"
+              style={{ originX: 0.5, originY: 0.5 }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: [0, 1.2, 0.8, 1.1], opacity: [0, 1, 0.7, 1], rotate: [0, 45, 90] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.6, delay: 0.3 + i * 0.12, repeat: Infinity, repeatType: "reverse" }}
             />
           ))}
       </AnimatePresence>
@@ -261,8 +365,8 @@ export function Bubble({ show, side, children }: { show: boolean; side: "left" |
     <AnimatePresence>
       {show && (
         <motion.div
-          className={`absolute top-[-2%] z-30 rounded-2xl bg-white px-3.5 py-2 font-display text-[clamp(0.85rem,3.4vw,1.1rem)] text-ink italic shadow-[0_10px_30px_-12px_rgba(62,31,44,0.45)] ${
-            side === "left" ? "left-[4%] rounded-bl-sm" : "right-[2%] rounded-br-sm"
+          className={`absolute top-[-5%] z-30 rounded-2xl bg-white px-3.5 py-2 font-display text-[clamp(0.85rem,3.4vw,1.1rem)] text-ink italic shadow-[0_10px_30px_-12px_rgba(62,31,44,0.45)] ${
+            side === "left" ? "left-[2%] rounded-bl-sm" : "right-[0%] rounded-br-sm"
           }`}
           initial={{ opacity: 0, y: 10, scale: 0.8 }}
           animate={{ opacity: 1, y: [0, -4, 0], scale: 1 }}
