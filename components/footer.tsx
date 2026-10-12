@@ -22,7 +22,7 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-wine px-5 pt-28 pb-[max(3rem,env(safe-area-inset-bottom))] text-center text-paper">
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <Photo src="/photos/hk4.jpg" alt="" sizes="100vw" className="h-full w-full object-cover object-[50%_30%] opacity-30" />
+        <Photo src="/photos/hk4.b8e94677.jpg" alt="" sizes="100vw" className="h-full w-full object-cover object-[50%_30%] opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-b from-wine via-wine/70 to-wine" />
       </div>
       <Reveal className="relative flex justify-center">

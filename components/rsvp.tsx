@@ -221,7 +221,7 @@ export function Rsvp() {
     <section id="rsvp" className="relative overflow-hidden bg-wine px-4 py-24 text-white sm:px-5 sm:py-36">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 opacity-25">
-          <Photo src="/photos/hk1.jpg" alt="" className="h-full w-full object-cover" />
+          <Photo src="/photos/hk1.a19af93f.jpg" alt="" className="h-full w-full object-cover" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-wine via-wine/85 to-wine" />
         <div className="aurora absolute -top-1/4 left-1/2 h-[90vh] w-[90vh] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(207,111,140,0.35)_0%,transparent_65%)]" />

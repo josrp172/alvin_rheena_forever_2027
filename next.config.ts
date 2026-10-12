@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/videos/:file*",
+        source: "/:dir(videos|photos)/:file*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
       {

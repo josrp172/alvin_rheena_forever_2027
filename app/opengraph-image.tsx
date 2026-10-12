@@ -9,7 +9,7 @@ export const alt = "Wedding invitation";
 
 export default async function OgImage() {
   const { partnerOne, partnerTwo } = wedding.couple;
-  const photo = await readFile(path.join(process.cwd(), "public/photos/hk6-700.jpg"));
+  const photo = await readFile(path.join(process.cwd(), "public/photos/hk6.c2b4bcba-700.jpg"));
   const src = `data:image/jpeg;base64,${photo.toString("base64")}`;
 
   return new ImageResponse(

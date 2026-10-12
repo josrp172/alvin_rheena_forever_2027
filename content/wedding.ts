@@ -59,7 +59,7 @@ export const wedding = {
         date: "College days",
         title: "The girl on the way to school",
         icon: "bus",
-        photo: "/photos/y1.jpg",
+        photo: "/photos/y1.ec7f9c64.jpg",
         body: "Alvin and Rheena were neighbours in Taguig and both studied engineering at RTU — different courses, same building. Alvin kept seeing Rheena on her way to school, and somewhere between those commutes he quietly fell for her, long before he ever said hello.",
       },
       {
@@ -67,7 +67,7 @@ export const wedding = {
         date: "Facebook",
         title: "Friend request: pending",
         icon: "chat",
-        photo: "/photos/silly.jpg",
+        photo: "/photos/silly.0f070725.jpg",
         body: "Alvin finally worked up the courage and sent Rheena a friend request. She ignored it. It took a real, face-to-face conversation before she finally pressed “Confirm” — and that one click opened the door to everything.",
       },
       {
@@ -75,7 +75,7 @@ export const wedding = {
         date: "The beginning of us",
         title: "From chats to “us”",
         icon: "heart",
-        photo: "/photos/early.jpg",
+        photo: "/photos/early.c557c6c2.jpg",
         body: "One chat turned into another, and another, until they became a couple. Both families welcomed the relationship from the start — and with personalities this alike, they just fit.",
       },
       {
@@ -83,7 +83,7 @@ export const wedding = {
         date: "Sundo at hatid",
         title: "The one who always shows up",
         icon: "car",
-        photo: "/photos/birthday.jpg",
+        photo: "/photos/birthday.fd0c7eb5.jpg",
         body: "Nine years, and not a single breakup. Alvin has been Rheena’s constant: the daily sundo at hatid, the name on her emergency contact, the steady presence just a few streets away. Rheena has the strong personality; Alvin has the patience — and it works.",
       },
       {
@@ -91,7 +91,7 @@ export const wedding = {
         date: "Our adventures",
         title: "Roads we’ve taken",
         icon: "wave",
-        photo: "/photos/aurora.jpg",
+        photo: "/photos/aurora.be23ef7a.jpg",
         body: "Over the years they’ve explored new places together — including the waves of Aurora — sometimes with Rheena’s sister Cass along for the ride. Every trip, of course, came with one of Rheena’s famously detailed itineraries.",
       },
       {
@@ -99,7 +99,7 @@ export const wedding = {
         date: "September · Hong Kong",
         title: "The question in Hong Kong",
         icon: "ring",
-        photo: "/photos/s1.jpg",
+        photo: "/photos/s1.e4043c68.jpg",
         body: "Far from the streets where it all began, Alvin asked Rheena to spend forever with him — in Hong Kong, in September 2026. After nine years of showing up for her, he asked the one question that mattered most. She said yes.",
       },
       {
@@ -107,7 +107,7 @@ export const wedding = {
         date: "October",
         title: "Forever, before God",
         icon: "church",
-        photo: "/photos/hk3.jpg",
+        photo: "/photos/hk3.29ad6a7f.jpg",
         body: "This October, surrounded by both of our families and everyone who has cheered us on, we’ll make our promise in a Catholic church wedding. Rheena has the itinerary ready. All that’s left is you.",
       },
     ],
@@ -127,7 +127,7 @@ export const wedding = {
   media: {
     /** Sample soundtrack ("Beautiful Dream", mixkit.co). Starts softly when the envelope is opened. */
     music: "https://assets.mixkit.co/music/493/493.mp3",
-    letterPhoto: "/photos/hk6.jpg",
+    letterPhoto: "/photos/hk6.c2b4bcba.jpg",
     hero: { src: "/videos/hero.82051f42.mp4", portrait: "/videos/hero-portrait.586ff14c.mp4" },
     /** Placeholder until the prenup shoot: the proposal itself, edited as a short film. */
     film: {
@@ -147,7 +147,7 @@ export const wedding = {
       ],
     },
     /** Shown beside the "behind the scenes" reel. */
-    momentsPhoto: { src: "/photos/camera.jpg", caption: "Official photographer" },
+    momentsPhoto: { src: "/photos/camera.5ce8a44a.jpg", caption: "Official photographer" },
     moments: [
       { caption: "Just an ordinary photoshoot…", src: "/videos/moment-1.ca675ec0.mp4" },
       { caption: "…or so she thought", src: "/videos/moment-2.896d6436.mp4" },
@@ -158,26 +158,26 @@ export const wedding = {
     ],
   },
 
-  /** Photos live in /public/photos as name-700.jpg and name-1400.jpg; refer to them as "/photos/name.jpg". */
+  /** Photos live in /public/photos in two sizes (-700, -1400). After adding photos, run `node scripts/hash-media.mjs`. */
   gallery: [
-    { src: "/photos/hk1.jpg", caption: "Hong Kong, September 2026" },
-    { src: "/photos/boracay.jpg", caption: "Sun-kissed in Boracay" },
-    { src: "/photos/y2.jpg", caption: "The early days" },
-    { src: "/photos/photobooth.jpg", caption: "Eight takes, zero regrets" },
-    { src: "/photos/s2.jpg", caption: "“Oo naman, yes!”" },
-    { src: "/photos/waterfall.jpg", caption: "Chasing waterfalls" },
-    { src: "/photos/fourth.jpg", caption: "Happy 4th to us — masks and all" },
-    { src: "/photos/y8.jpg", caption: "Photo booth, four times over" },
-    { src: "/photos/fries.jpg", caption: "Kain tayo, always" },
-    { src: "/photos/s3.jpg", caption: "“May ring ka na!!!”" },
-    { src: "/photos/y9.jpg", caption: "Congratulations, Engineer!" },
-    { src: "/photos/archery.jpg", caption: "Bullseye" },
-    { src: "/photos/camera.jpg", caption: "Official photographer since day one" },
-    { src: "/photos/beach-pose.jpg", caption: "Beach-day energy" },
-    { src: "/photos/y7.jpg", caption: "Canteen dates" },
-    { src: "/photos/hk6.jpg", caption: "That look" },
-    { src: "/photos/y3.jpg", caption: "The arcade prize" },
-    { src: "/photos/y6.jpg", caption: "Since forever, this silly" },
+    { src: "/photos/hk1.a19af93f.jpg", caption: "Hong Kong, September 2026" },
+    { src: "/photos/boracay.1e633059.jpg", caption: "Sun-kissed in Boracay" },
+    { src: "/photos/y2.b2b0bd91.jpg", caption: "The early days" },
+    { src: "/photos/photobooth.605fc97f.jpg", caption: "Eight takes, zero regrets" },
+    { src: "/photos/s2.b5c0b6e2.jpg", caption: "“Oo naman, yes!”" },
+    { src: "/photos/waterfall.24e382c3.jpg", caption: "Chasing waterfalls" },
+    { src: "/photos/fourth.db483288.jpg", caption: "Happy 4th to us — masks and all" },
+    { src: "/photos/y8.17dc593c.jpg", caption: "Photo booth, four times over" },
+    { src: "/photos/fries.9152ab47.jpg", caption: "Kain tayo, always" },
+    { src: "/photos/s3.862ecc93.jpg", caption: "“May ring ka na!!!”" },
+    { src: "/photos/y9.10d12336.jpg", caption: "Congratulations, Engineer!" },
+    { src: "/photos/archery.93b9c297.jpg", caption: "Bullseye" },
+    { src: "/photos/camera.5ce8a44a.jpg", caption: "Official photographer since day one" },
+    { src: "/photos/beach-pose.53b6a4f9.jpg", caption: "Beach-day energy" },
+    { src: "/photos/y7.356ae0a6.jpg", caption: "Canteen dates" },
+    { src: "/photos/hk6.c2b4bcba.jpg", caption: "That look" },
+    { src: "/photos/y3.ad575d1e.jpg", caption: "The arcade prize" },
+    { src: "/photos/y6.21fef08d.jpg", caption: "Since forever, this silly" },
   ],
 
   /** The big scroll-to-reveal line between the letter and the story: her real answer from the proposal. */
@@ -205,7 +205,7 @@ export const wedding = {
       address: "Batulao, Nasugbu, Batangas",
       note: "Our Catholic church ceremony. Please be seated by 2:40 PM — Rheena has planned this to the minute.",
       mapsQuery: "Caleruega Church Nasugbu Batangas",
-      photo: "/photos/hk4.jpg",
+      photo: "/photos/hk4.b8e94677.jpg",
     },
     {
       kind: "The Reception",
@@ -214,7 +214,7 @@ export const wedding = {
       address: "Tagaytay City, Cavite",
       note: "Dinner, dancing and string lights under the open sky. About 25 minutes from the church.",
       mapsQuery: "Hillcreek Gardens Tagaytay",
-      photo: "/photos/hk8.jpg",
+      photo: "/photos/hk8.7da93724.jpg",
     },
   ],
 
@@ -239,8 +239,8 @@ export const wedding = {
     avoid: "Kindly avoid white, ivory and cream — those belong to the bride.",
     /** Real outfits from the couple, shown as inspiration. */
     inspo: [
-      { src: "/photos/garden-formal.jpg", caption: "Garden formal" },
-      { src: "/photos/twinning.jpg", caption: "Twinning, always" },
+      { src: "/photos/garden-formal.ff0d356b.jpg", caption: "Garden formal" },
+      { src: "/photos/twinning.042983f5.jpg", caption: "Twinning, always" },
     ],
     palette: [
       { name: "Blush", hex: "#E8B4BC" },
@@ -285,11 +285,11 @@ export const wedding = {
   travel: {
     /** Trips the couple has taken together. */
     getaways: [
-      { src: "/photos/boracay.jpg", caption: "Boracay" },
-      { src: "/photos/waterfall.jpg", caption: "Chasing waterfalls" },
-      { src: "/photos/beach-sunset.jpg", caption: "Golden hour" },
-      { src: "/photos/beach-pose.jpg", caption: "Beach-day energy" },
-      { src: "/photos/resort-sunset.jpg", caption: "Slow weekends" },
+      { src: "/photos/boracay.1e633059.jpg", caption: "Boracay" },
+      { src: "/photos/waterfall.24e382c3.jpg", caption: "Chasing waterfalls" },
+      { src: "/photos/beach-sunset.41f87d75.jpg", caption: "Golden hour" },
+      { src: "/photos/beach-pose.53b6a4f9.jpg", caption: "Beach-day energy" },
+      { src: "/photos/resort-sunset.1528f281.jpg", caption: "Slow weekends" },
     ],
     intro:
       "Tagaytay is about 1.5 to 2 hours from Metro Manila, depending on traffic. We recommend leaving early and making a day of it.",

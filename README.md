@@ -25,6 +25,18 @@ npm run studio            # preview and tweak in the browser
 
 Source footage goes in `video/public/` (it's git-ignored because of its size). Timings, subtitles and chapters live in `video/src/data.ts`. After rendering, the compressed files go in `public/videos/`, and the chapter start times in `content/wedding.ts` must match the film.
 
+## Caching (fast repeat visits)
+
+Photos, videos, fonts and app code are cached in each guest's browser for a year, so repeat visits on phone or desktop load them straight from the device. This is safe because every file name contains a fingerprint of its contents (`hero.82051f42.mp4`); a changed file gets a new name, so no one gets stuck with an old version. The page itself is always re-checked, so guests see updates immediately.
+
+After adding or replacing anything in `public/photos` or `public/videos`, run:
+
+```bash
+node scripts/hash-media.mjs
+```
+
+It renames new files with their fingerprint and updates every reference automatically.
+
 ## Run locally
 
 ```bash
